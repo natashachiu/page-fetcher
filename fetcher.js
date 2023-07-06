@@ -11,14 +11,14 @@ const makeRequest = (url, filePath) => {
   request(url, (error, response, body) => {
     if (error) {
       console.log("Url invalid - Website does not exist\n", error);
-
-    } else if (response && response.statusCode !== 200) {
-      console.log("Url invalid - Status code:", response.statusCode);
-
-    } else {
-      readFile(filePath, body);
+      process.exit();
     }
-    rl.close();
+    if (response && response.statusCode !== 200) {
+      console.log("Url invalid - Status code:", response.statusCode);
+      process.exit();
+    }
+    readFile(filePath, body);
+
   });
 };
 
@@ -27,10 +27,10 @@ const writeToFile = (filePath, body) => {
   fs.writeFile(filePath, body, (err) => {
     if (err) {
       console.log("Cannot write to invalid file path\n", err);
-    } else {
-      console.log(`Downloaded and saved ${body.length} bytes to ${filePath}\r`);
+      process.exit();
     }
-    rl.close();
+    console.log(`Downloaded and saved ${body.length} bytes to ${filePath}\r`);
+
   });
 };
 
@@ -48,6 +48,7 @@ const readFile = (filePath, body) => {
       });
     } else {
       writeToFile(filePath, body);
+      process.exit();
     }
   });
 };
